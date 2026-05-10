@@ -273,4 +273,18 @@ export const userApi = {
   }
 }
 
+export const passwordResetApi = {
+  sendCode(data) {
+    return request.post('/password-reset/send-code', data)
+  },
+
+  verifyCode(data) {
+    return request.post('/password-reset/verify-code', data)
+  },
+
+  resetPassword(data) {
+    return request.post('/password-reset/reset', data)
+  }
+}
+
 export default request

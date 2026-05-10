@@ -27,7 +27,12 @@ public enum ResultCode {
     LOGIN_FAILED(1005, "登录失败"),
     REGISTER_FAILED(1006, "注册失败"),
     INVALID_TOKEN(1007, "无效的Token"),
-    TOKEN_EXPIRED(1008, "Token已过期");
+    TOKEN_EXPIRED(1008, "Token已过期"),
+    EMAIL_NOT_REGISTERED(1009, "该邮箱未注册"),
+    CODE_SEND_TOO_FREQUENT(1010, "验证码发送过于频繁，请60秒后重试"),
+    CODE_INVALID(1011, "验证码无效或已过期"),
+    CODE_ALREADY_USED(1012, "验证码已使用"),
+    PASSWORD_RESET_FAILED(1013, "密码重置失败");
 
     /**
      * 状态码
