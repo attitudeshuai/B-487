@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import ForgotPassword from '../views/ForgotPassword.vue'
 import Home from '../views/Home.vue'
 import { getToken, clearAuth } from '../utils/request'
 
@@ -16,6 +17,12 @@ const routes = [
     name: 'Register',
     component: Register,
     meta: { title: '注册', requiresAuth: false }
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword,
+    meta: { title: '忘记密码', requiresAuth: false }
   },
   {
     path: '/',
@@ -46,8 +53,8 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     // 需要登录但未登录，跳转到登录页
     next({ name: 'Login', query: { redirect: to.fullPath } })
-  } else if (!to.meta.requiresAuth && isAuthenticated && (to.name === 'Login' || to.name === 'Register')) {
-    // 已登录但访问登录/注册页，跳转到首页
+  } else if (!to.meta.requiresAuth && isAuthenticated && (to.name === 'Login' || to.name === 'Register' || to.name === 'ForgotPassword')) {
+    // 已登录但访问登录/注册/忘记密码页，跳转到首页
     next({ name: 'Home' })
   } else {
     next()

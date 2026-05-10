@@ -266,6 +266,30 @@ export const userApi = {
   },
   
   /**
+   * 发送重置密码验证码
+   * @param {Object} data - { email }
+   */
+  sendResetCode(data) {
+    return request.post('/user/send-reset-code', data)
+  },
+  
+  /**
+   * 校验验证码
+   * @param {Object} data - { email, code }
+   */
+  verifyCode(data) {
+    return request.post('/user/verify-code', data)
+  },
+  
+  /**
+   * 重置密码
+   * @param {Object} data - { email, code, newPassword }
+   */
+  resetPassword(data) {
+    return request.post('/user/reset-password', data)
+  },
+  
+  /**
    * 健康检查
    */
   health() {

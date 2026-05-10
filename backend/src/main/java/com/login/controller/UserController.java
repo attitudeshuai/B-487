@@ -3,7 +3,11 @@ package com.login.controller;
 import com.login.common.Result;
 import com.login.dto.LoginDTO;
 import com.login.dto.RegisterDTO;
+import com.login.dto.ResetPasswordDTO;
+import com.login.dto.SendCodeDTO;
+import com.login.dto.VerifyCodeDTO;
 import com.login.service.UserService;
+import com.login.service.VerificationCodeService;
 import com.login.vo.AuthVO;
 import com.login.vo.UserVO;
 import jakarta.validation.Valid;
@@ -23,9 +27,11 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final VerificationCodeService verificationCodeService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, VerificationCodeService verificationCodeService) {
         this.userService = userService;
+        this.verificationCodeService = verificationCodeService;
     }
 
     /**
@@ -102,6 +108,49 @@ public class UserController {
         log.info("用户登出");
         // JWT 无状态，登出由前端清除 Token 实现
         return Result.success("登出成功", null);
+    }
+
+    /**
+     * 发送重置密码验证码
+     *
+     * @param sendCodeDTO 请求体
+     * @return 操作结果
+     */
+    @PostMapping("/send-reset-code")
+    public Result<Void> sendResetCode(@Valid @RequestBody SendCodeDTO sendCodeDTO) {
+        log.info("发送重置密码验证码: email={}", sendCodeDTO.getEmail());
+        verificationCodeService.sendResetPasswordCode(sendCodeDTO.getEmail());
+        return Result.success("验证码发送成功", null);
+    }
+
+    /**
+     * 校验验证码
+     *
+     * @param verifyCodeDTO 请求体
+     * @return 校验结果
+     */
+    @PostMapping("/verify-code")
+    public Result<Boolean> verifyCode(@Valid @RequestBody VerifyCodeDTO verifyCodeDTO) {
+        log.info("校验验证码: email={}", verifyCodeDTO.getEmail());
+        boolean valid = verificationCodeService.verifyCode(verifyCodeDTO.getEmail(), verifyCodeDTO.getCode());
+        return Result.success("验证码校验通过", valid);
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param resetPasswordDTO 请求体
+     * @return 操作结果
+     */
+    @PostMapping("/reset-password")
+    public Result<Void> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        log.info("重置密码: email={}", resetPasswordDTO.getEmail());
+        verificationCodeService.resetPassword(
+                resetPasswordDTO.getEmail(),
+                resetPasswordDTO.getCode(),
+                resetPasswordDTO.getNewPassword()
+        );
+        return Result.success("密码重置成功", null);
     }
 
     /**
