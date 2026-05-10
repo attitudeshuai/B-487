@@ -53,6 +53,7 @@ public class SecurityConfig {
                     "/api/user/login",
                     "/api/user/register",
                     "/api/user/refresh",
+                    "/api/password-reset/**",
                     "/api/health/**"
                 ).permitAll()
                 // 其他请求需要认证

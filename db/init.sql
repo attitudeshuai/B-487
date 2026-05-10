@@ -45,6 +45,22 @@ INSERT INTO t_user (username, password, nickname, email, status) VALUES
 ('testuser', '384e49109f743d5eac4442473efb5e25', 'Test User', 'test@example.com', 1);
 
 -- ========================================
+-- Password Reset Table
+-- ========================================
+CREATE TABLE IF NOT EXISTS t_password_reset (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Reset ID',
+    email VARCHAR(100) NOT NULL COMMENT 'Email address',
+    code VARCHAR(6) NOT NULL COMMENT 'Verification code',
+    used TINYINT DEFAULT 0 COMMENT 'Used: 0-unused, 1-used',
+    reset_token VARCHAR(64) DEFAULT NULL COMMENT 'Reset token for password change',
+    expire_time DATETIME NOT NULL COMMENT 'Expire time',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Create time',
+    INDEX idx_email (email),
+    INDEX idx_expire_time (expire_time),
+    INDEX idx_reset_token (reset_token)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Password reset table';
+
+-- ========================================
 -- Verify Data
 -- ========================================
 SELECT id, username, nickname, email, status, create_time FROM t_user;

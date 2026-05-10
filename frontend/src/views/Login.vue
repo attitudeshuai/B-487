@@ -84,6 +84,7 @@
       <!-- 底部链接 -->
       <div class="auth-footer">
         <p>还没有账户？ <router-link to="/register">立即注册</router-link></p>
+        <p class="forgot-link"><router-link to="/forgot-password">忘记密码？</router-link></p>
       </div>
     </div>
   </div>
@@ -339,6 +340,20 @@ const handleLogin = async () => {
 
 .auth-footer a {
   font-weight: 600;
+}
+
+.forgot-link {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.forgot-link a {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.forgot-link a:hover {
+  color: var(--primary-color);
 }
 
 /* 响应式 */
