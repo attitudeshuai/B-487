@@ -48,11 +48,14 @@ public class SecurityConfig {
             )
             // 配置请求授权
             .authorizeHttpRequests(auth -> auth
-                // 放行登录、注册、健康检查接口
+                // 放行登录、注册、健康检查、重置密码相关接口
                 .requestMatchers(
                     "/api/user/login",
                     "/api/user/register",
                     "/api/user/refresh",
+                    "/api/user/send-reset-code",
+                    "/api/user/verify-code",
+                    "/api/user/reset-password",
                     "/api/health/**"
                 ).permitAll()
                 // 其他请求需要认证

@@ -45,6 +45,24 @@ INSERT INTO t_user (username, password, nickname, email, status) VALUES
 ('testuser', '384e49109f743d5eac4442473efb5e25', 'Test User', 'test@example.com', 1);
 
 -- ========================================
+-- Verification Code Table
+-- ========================================
+DROP TABLE IF EXISTS t_verification_code;
+
+CREATE TABLE t_verification_code (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Primary Key',
+    email VARCHAR(100) NOT NULL COMMENT 'Email address',
+    code VARCHAR(6) NOT NULL COMMENT 'Verification code (6 digits)',
+    type VARCHAR(20) NOT NULL DEFAULT 'PASSWORD_RESET' COMMENT 'Code type: PASSWORD_RESET',
+    expire_time DATETIME NOT NULL COMMENT 'Expiration time',
+    used TINYINT DEFAULT 0 COMMENT 'Used status: 0-not used, 1-used',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Create time',
+    INDEX idx_email (email),
+    INDEX idx_code (code),
+    INDEX idx_expire_time (expire_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Verification code table';
+
+-- ========================================
 -- Verify Data
 -- ========================================
 SELECT id, username, nickname, email, status, create_time FROM t_user;

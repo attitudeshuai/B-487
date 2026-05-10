@@ -64,6 +64,11 @@
           <p v-if="errors.password" class="input-error">{{ errors.password }}</p>
         </div>
 
+        <!-- 忘记密码链接 -->
+        <div class="forgot-password">
+          <router-link to="/forgot-password">忘记密码？</router-link>
+        </div>
+
         <!-- 错误提示 -->
         <div v-if="errorMessage" class="error-alert">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -309,6 +314,23 @@ const handleLogin = async () => {
 .password-toggle svg {
   width: 20px;
   height: 20px;
+}
+
+/* 忘记密码链接 */
+.forgot-password {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot-password a {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.forgot-password a:hover {
+  color: var(--primary-color);
 }
 
 /* 错误提示 */
