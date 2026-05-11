@@ -1,9 +1,16 @@
 package com.login.controller;
 
 import com.login.common.Result;
+import com.login.common.ResultCode;
 import com.login.dto.LoginDTO;
 import com.login.dto.RegisterDTO;
+import com.login.dto.ResetPasswordDTO;
+import com.login.dto.SendCodeDTO;
+import com.login.dto.VerifyCodeDTO;
+import com.login.entity.User;
+import com.login.exception.BusinessException;
 import com.login.service.UserService;
+import com.login.service.VerificationCodeService;
 import com.login.vo.AuthVO;
 import com.login.vo.UserVO;
 import jakarta.validation.Valid;
@@ -23,9 +30,11 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final VerificationCodeService verificationCodeService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, VerificationCodeService verificationCodeService) {
         this.userService = userService;
+        this.verificationCodeService = verificationCodeService;
     }
 
     /**
@@ -102,6 +111,68 @@ public class UserController {
         log.info("用户登出");
         // JWT 无状态，登出由前端清除 Token 实现
         return Result.success("登出成功", null);
+    }
+
+    /**
+     * 发送密码重置验证码
+     * 
+     * @param sendCodeDTO 发送验证码请求
+     * @return 操作结果
+     */
+    @PostMapping("/send-reset-code")
+    public Result<Void> sendResetCode(@Valid @RequestBody SendCodeDTO sendCodeDTO) {
+        String email = sendCodeDTO.getEmail();
+        log.info("发送密码重置验证码: email={}", email);
+        
+        User user = userService.getByEmail(email);
+        if (user == null) {
+            throw new BusinessException(ResultCode.EMAIL_NOT_FOUND);
+        }
+        
+        verificationCodeService.sendVerificationCode(email);
+        return Result.success("验证码已发送", null);
+    }
+
+    /**
+     * 验证密码重置验证码
+     * 
+     * @param verifyCodeDTO 验证验证码请求
+     * @return 操作结果
+     */
+    @PostMapping("/verify-reset-code")
+    public Result<Void> verifyResetCode(@Valid @RequestBody VerifyCodeDTO verifyCodeDTO) {
+        String email = verifyCodeDTO.getEmail();
+        String code = verifyCodeDTO.getCode();
+        log.info("验证密码重置验证码: email={}", email);
+        
+        boolean isValid = verificationCodeService.verifyCode(email, code);
+        if (!isValid) {
+            throw new BusinessException(ResultCode.INVALID_CODE);
+        }
+        
+        return Result.success("验证码验证成功", null);
+    }
+
+    /**
+     * 重置密码
+     * 
+     * @param resetPasswordDTO 重置密码请求
+     * @return 操作结果
+     */
+    @PostMapping("/reset-password")
+    public Result<Void> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        String email = resetPasswordDTO.getEmail();
+        String code = resetPasswordDTO.getCode();
+        String newPassword = resetPasswordDTO.getNewPassword();
+        log.info("重置密码: email={}", email);
+        
+        boolean isValid = verificationCodeService.verifyAndInvalidateCode(email, code);
+        if (!isValid) {
+            throw new BusinessException(ResultCode.INVALID_CODE);
+        }
+        
+        userService.resetPassword(email, newPassword);
+        return Result.success("密码重置成功", null);
     }
 
     /**
