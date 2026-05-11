@@ -239,6 +239,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return getOne(wrapper);
     }
 
+    @Override
+    public User getByEmail(String email) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getEmail, email);
+        return getOne(wrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void resetPassword(String email, String newPassword) {
+        log.info("重置密码: email={}", email);
+        
+        User user = getByEmail(email);
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setUpdateTime(LocalDateTime.now());
+        boolean updated = updateById(user);
+        if (!updated) {
+            log.error("密码重置失败: userId={}", user.getId());
+            throw new BusinessException(ResultCode.INTERNAL_ERROR, "密码重置失败");
+        }
+        
+        log.info("密码重置成功: userId={}", user.getId());
+    }
+
     /**
      * 旧密码加密（MD5 + 盐，仅用于兼容迁移）
      */

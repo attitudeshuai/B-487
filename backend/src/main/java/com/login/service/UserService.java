@@ -60,5 +60,21 @@ public interface UserService extends IService<User> {
      * @return 用户实体
      */
     User getByUsername(String username);
+
+    /**
+     * 根据邮箱查询用户
+     *
+     * @param email 邮箱
+     * @return 用户实体
+     */
+    User getByEmail(String email);
+
+    /**
+     * 重置密码
+     *
+     * @param email       邮箱
+     * @param newPassword 新密码
+     */
+    void resetPassword(String email, String newPassword);
 }
 
